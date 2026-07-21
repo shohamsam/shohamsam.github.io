@@ -391,7 +391,7 @@ footer {
     <!-- Case study 1: Lifecycle Editor -->
     <a class="case-card" href="lifecycle-editor/">
       <div class="case-card__img">
-        <video autoplay muted loop playsinline
+        <video muted loop playsinline
           poster="lifecycle-editor/images/kanban-lifecycle-created.png">
           <source src="lifecycle-editor/images/lifecycle-builder.mp4" type="video/mp4">
         </video>
@@ -407,7 +407,7 @@ footer {
     <!-- Case study 2: Codefresh Runtime Installation -->
     <a class="case-card" href="https://shohamsam.github.io/runtime-case-study/" target="_blank">
       <div class="case-card__img">
-        <video autoplay muted loop playsinline
+        <video muted loop playsinline
           poster="https://shohamsam.github.io/runtime-case-study/assets/success-stepper-v2.png">
           <source src="https://shohamsam.github.io/runtime-case-study/assets/install-flow.mp4" type="video/mp4">
         </video>
@@ -442,5 +442,13 @@ footer {
   </div>
 </footer>
 
+<script>
+  document.querySelectorAll('.case-card').forEach(card => {
+    const video = card.querySelector('video');
+    if (!video) return;
+    card.addEventListener('mouseenter', () => video.play());
+    card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+  });
+</script>
 </body>
 </html>
