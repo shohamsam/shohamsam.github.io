@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lifecycle Editor - Kanban Prototype (B)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f5f6f8;
+    --bg-tertiary: #eceef1;
+    --text-primary: #282f38;
+    --text-secondary: #5c6470;
+    --text-muted: #8d95a0;
+    --accent: #1a77ca;
+    --accent-hover: #155fa0;
+    --accent-light: #e8f2fb;
+    --border: #d0d5dd;
+    --border-light: #e8eaed;
+    --danger: #d94f3d;
+    --success: #2f9e60;
+    --navy: #1f303f;
+    --navy-dark: #111a23;
+    --navy-sidebar: #1b2c3b;
+    --navy-sidebar-hover: #253d50;
+    --radius: 6px;
+    --radius-sm: 4px;
+    --shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.15);
+    --col-width: 240px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .app-shell {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  .icon-rail {
+    width: 52px;
+    background: var(--navy-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .icon-rail .rail-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,.45);
+    font-size: 15px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .icon-rail .rail-icon:hover { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); }
+  .icon-rail .rail-icon.active { background: var(--accent); color: #fff; }
+  .icon-rail .rail-sep { width: 26px; height: 1px; background: rgba(255,255,255,.1); margin: 4px 0; }
+
+  .sidebar {
+    width: 220px;
+    background: var(--navy-sidebar);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+  .sidebar-header {
+    padding: 14px 14px 10px;
+    color: rgba(255,255,255,.5);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+  }
+  .sidebar-item {
+    padding: 7px 14px;
+    color: rgba(255,255,255,.65);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: background .12s, color .12s;
+  }
+  .sidebar-item:hover { background: var(--navy-sidebar-hover); color: rgba(255,255,255,.9); }
+  .sidebar-item.active { background: rgba(26,119,202,.25); color: #fff; border-left: 3px solid var(--accent); }
+  .sidebar-item i { width: 14px; text-align: center; font-size: 12px; }
+
+  .main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--bg-secondary);
+  }
+
+  .topbar {
+    height: 48px;
+    background: #fff;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .topbar-breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--text-secondary);
+  }
+  .topbar-breadcrumb .sep { color: var(--border); }
+  .topbar-breadcrumb .current { color: var(--text-primary); font-weight: 500; }
+  .topbar-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .btn {
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background .12s, border-color .12s, opacity .12s;
+    font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border); }
+  .btn-ghost:hover { background: var(--bg-secondary); color: var(--text-primary); }
+  .btn-sm { padding: 4px 10px; font-size: 12px; }
+
+  .lifecycle-bar {
+    background: #fff;
+    border-bottom: 1px solid var(--border-light);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .lifecycle-name-input {
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: inherit;
+    flex: 1;
+    border-bottom: 2px solid transparent;
+    padding-bottom: 2px;
+    transition: border-color .15s;
+  }
+  .lifecycle-name-input:focus { border-bottom-color: var(--accent); }
+  .lifecycle-name-input::placeholder { color: var(--text-muted); font-weight: 400; }
+  .lifecycle-desc-input {
+    font-size: 13px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    width: 100%;
+    margin-top: 2px;
+  }
+  .lifecycle-desc-input::placeholder { color: var(--text-muted); }
+
+  .kanban-area {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .board-scroll {
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: auto;
+    display: flex;
+    padding: 20px;
+    gap: 16px;
+    align-items: flex-start;
+    min-height: 0;
+  }
+
+  .phase-col {
+    width: var(--col-width);
+    min-width: var(--col-width);
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 138px);
+    flex-shrink: 0;
+    transition: box-shadow .15s;
+  }
+  .phase-col.drag-target {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(26,119,202,.2);
+  }
+  .phase-col.col-dragging { opacity: .4; }
+
+  .phase-col-header {
+    padding: 12px 12px 10px;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--navy);
+    border-radius: 8px 8px 0 0;
+    position: relative;
+  }
+  .phase-col-top { display: flex; align-items: center; gap: 6px; }
+  .col-drag-handle {
+    color: rgba(255,255,255,.4);
+    font-size: 12px;
+    cursor: grab;
+    padding: 2px;
+  }
+  .col-drag-handle:active { cursor: grabbing; }
+  .phase-col-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    outline: none;
+    border-bottom: 1px solid transparent;
+    padding: 1px 0;
+    transition: border-color .15s;
+  }
+  .phase-col-name:focus { border-bottom-color: rgba(255,255,255,.5); }
+  .phase-col-name::placeholder { color: rgba(255,255,255,.4); }
+  .col-action-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,.5);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 3px;
+    font-family: inherit;
+    transition: color .12s, background .12s;
+  }
+  .col-action-btn:hover { color: #fff; background: rgba(255,255,255,.12); }
+  .phase-col-meta {
+    margin-top: 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,.45);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 8px;
+  }
+  .col-badge-auto { background: rgba(26,119,202,.6); color: #fff; }
+  .col-badge-manual { background: rgba(255,255,255,.15); color: rgba(255,255,255,.7); }
+
+  .env-drop-zone {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    min-height: 80px;
+    position: relative;
+  }
+  .env-drop-zone.drop-active { background: var(--accent-light); }
+  .drop-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    color: var(--text-muted);
+    font-size: 12px;
+    gap: 6px;
+    margin: 4px 0;
+    transition: border-color .15s, background .15s;
+  }
+  .env-drop-zone.drop-active .drop-hint {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(26,119,202,.06);
+  }
+
+  .env-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: grab;
+    transition: box-shadow .12s, border-color .12s, opacity .12s;
+    user-select: none;
+  }
+  .env-card:active { cursor: grabbing; }
+  .env-card:hover { border-color: var(--border); box-shadow: var(--shadow); }
+  .env-card.card-dragging { opacity: .35; }
+  .env-card-icon { color: var(--text-muted); font-size: 11px; flex-shrink: 0; }
+  .env-card-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--text-primary); }
+  .env-card-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 5px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: opacity .12s;
+  }
+  .env-card-badge:hover { opacity: .7; }
+  .badge-auto { background: rgba(26,119,202,.12); color: var(--accent); }
+  .badge-manual { background: rgba(92,100,112,.1); color: var(--text-secondary); }
+  .env-card-remove {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 11px;
+    padding: 3px;
+    border-radius: 3px;
+    font-family: inherit;
+    flex-shrink: 0;
+    transition: color .12s;
+  }
+  .env-card-remove:hover { color: var(--danger); }
+
+  .add-col-btn {
+    width: 200px;
+    min-width: 200px;
+    height: 52px;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background .12s, border-color .12s, color .12s;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+  .add-col-btn:hover { background: rgba(26,119,202,.06); border-color: var(--accent); color: var(--accent); }
+
+  .env-pool-panel {
+    width: 220px;
+    min-width: 220px;
+    background: #fff;
+    border-left: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .pool-header {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+  }
+  .pool-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .pool-subtitle { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+  .pool-body { flex: 1; overflow-y: auto; padding: 10px 10px; }
+  .pool-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin: 8px 2px 6px;
+  }
+
+  .pool-env-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: grab;
+    transition: box-shadow .12s, border-color .12s, opacity .12s;
+    user-select: none;
+  }
+  .pool-env-card:hover { border-color: var(--border); box-shadow: var(--shadow); }
+  .pool-env-card:active { cursor: grabbing; }
+  .pool-env-card.card-dragging { opacity: .35; }
+  .pool-env-card-icon { color: var(--text-muted); font-size: 11px; }
+  .pool-env-card-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--text-primary); }
+
+  .pool-assigned {
+    text-align: center;
+    padding: 20px 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  @keyframes pool-panel-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px var(--accent), 0 0 10px rgba(26,119,202,.12); }
+    50%       { box-shadow: 0 0 0 3px var(--accent), 0 0 22px rgba(26,119,202,.28); }
+  }
+  .env-pool-panel { transition: background .2s ease, box-shadow .2s ease; }
+  .env-pool-panel.pool-highlight {
+    background: var(--accent-light);
+    animation: pool-panel-pulse 1.4s ease-in-out infinite;
+  }
+  .env-pool-panel.pool-highlight .pool-header { background: var(--accent-light); }
+  .env-pool-panel.pool-highlight .pool-title { color: var(--accent); }
+  .env-pool-panel.pool-highlight .pool-env-card {
+    border-color: rgba(26,119,202,.4);
+    box-shadow: 0 0 0 1px rgba(26,119,202,.15);
+  }
+
+  .drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.3);
+    z-index: 200;
+    display: none;
+    backdrop-filter: blur(1px);
+  }
+  .drawer-overlay.open { display: block; }
+  .settings-drawer {
+    position: fixed;
+    top: 0; right: -440px;
+    width: 440px;
+    height: 100%;
+    background: #fff;
+    box-shadow: -4px 0 24px rgba(0,0,0,.18);
+    z-index: 201;
+    transition: right .25s cubic-bezier(.4,0,.2,1);
+    display: flex;
+    flex-direction: column;
+  }
+  .settings-drawer.open { right: 0; }
+  .drawer-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    background: var(--navy);
+    color: #fff;
+  }
+  .drawer-title { font-size: 15px; font-weight: 600; flex: 1; color: #fff; }
+  .drawer-close {
+    background: none; border: none;
+    color: rgba(255,255,255,.6); font-size: 16px;
+    cursor: pointer; padding: 4px; border-radius: 4px;
+    font-family: inherit;
+  }
+  .drawer-close:hover { color: #fff; background: rgba(255,255,255,.1); }
+  .drawer-body { flex: 1; overflow-y: auto; padding: 20px; }
+  .drawer-footer {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-shrink: 0;
+  }
+  .setting-group { margin-bottom: 24px; }
+  .setting-group-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-light);
+  }
+  .setting-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .setting-info { flex: 1; }
+  .setting-label { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-bottom: 3px; }
+  .setting-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .setting-control { flex-shrink: 0; }
+  .num-input {
+    width: 64px;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: inherit;
+    text-align: center;
+    color: var(--text-primary);
+  }
+  .num-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,119,202,.1); }
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    transition: background .1s, border-color .1s;
+  }
+  .radio-option:hover { background: var(--bg-secondary); border-color: var(--accent); }
+  .radio-option input[type=radio] { margin-top: 2px; accent-color: var(--accent); }
+  .radio-option-text { font-size: 13px; font-weight: 500; }
+  .radio-option-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+  .danger-zone {
+    margin-top: 24px;
+    padding: 14px;
+    background: rgba(217,79,61,.05);
+    border: 1px solid rgba(217,79,61,.2);
+    border-radius: var(--radius);
+  }
+  .danger-zone-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--danger);
+    margin-bottom: 8px;
+  }
+  .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+  .btn-danger:hover { background: #b33a2a; }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--text-primary);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 300;
+    opacity: 0;
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="icon-rail">
+    <div class="rail-icon active" title="Deploy"><i class="fas fa-rocket"></i></div>
+    <div class="rail-sep"></div>
+    <div class="rail-icon" title="Insights"><i class="fas fa-chart-bar"></i></div>
+    <div class="rail-icon" title="Tasks"><i class="fas fa-tasks"></i></div>
+    <div class="rail-icon" title="Settings"><i class="fas fa-cog"></i></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-header">Library</div>
+    <div class="sidebar-item"><i class="fas fa-project-diagram"></i> Projects</div>
+    <div class="sidebar-item"><i class="fas fa-layer-group"></i> Environments</div>
+    <div class="sidebar-item active"><i class="fas fa-route"></i> Lifecycles</div>
+    <div class="sidebar-item"><i class="fas fa-code-branch"></i> Channels</div>
+    <div class="sidebar-item"><i class="fas fa-tag"></i> Step Templates</div>
+    <div class="sidebar-header" style="margin-top:12px">Infrastructure</div>
+    <div class="sidebar-item"><i class="fas fa-server"></i> Deployment Targets</div>
+    <div class="sidebar-item"><i class="fas fa-users-cog"></i> Workers</div>
+    <div class="sidebar-item"><i class="fas fa-key"></i> Certificates</div>
+  </div>
+
+  <div class="main-area">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span>Library</span>
+        <span class="sep">/</span>
+        <span>Lifecycles</span>
+        <span class="sep">/</span>
+        <span class="current">Create Lifecycle</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="resetForm()">Discard</button>
+        <button class="btn btn-primary" id="save-btn" disabled onclick="saveLifecycle()">
+          <i class="fas fa-check"></i> Save Lifecycle
+        </button>
+      </div>
+    </div>
+
+    <div class="lifecycle-bar">
+      <div style="flex:1">
+        <input class="lifecycle-name-input" type="text" id="lifecycle-name"
+          placeholder="Lifecycle name (required)"
+          oninput="onNameInput(this.value)">
+        <input class="lifecycle-desc-input" type="text" id="lifecycle-desc"
+          placeholder="Add a description&hellip;">
+      </div>
+    </div>
+
+    <div class="kanban-area">
+      <div class="board-scroll" id="board-scroll">
+        <button class="add-col-btn" onclick="addPhase()" id="add-col-btn">
+          <i class="fas fa-plus"></i> Add Phase
+        </button>
+      </div>
+
+      <div class="env-pool-panel" id="env-pool-panel">
+        <div class="pool-header">
+          <div class="pool-title">Environments</div>
+          <div class="pool-subtitle">Drag into a phase column, or click <i class="fas fa-plus" style="font-size:10px"></i> on a column.</div>
+        </div>
+        <div class="pool-body" id="pool-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+<div class="settings-drawer" id="settings-drawer">
+  <div class="drawer-header">
+    <i class="fas fa-cog"></i>
+    <div class="drawer-title" id="drawer-title">Phase Settings</div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="drawer-body">
+    <div class="setting-group">
+      <div class="setting-group-title">Deployment Mode</div>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="deploy-mode" value="auto" checked>
+          <div>
+            <div class="radio-option-text">Automatic</div>
+            <div class="radio-option-desc">Releases automatically deploy to this phase when they pass the previous phase.</div>
+          </div>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="deploy-mode" value="manual">
+          <div>
+            <div class="radio-option-text">Manual</div>
+            <div class="radio-option-desc">A team member must manually trigger deployment to this phase.</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-group-title">Minimum Required Deployments</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Environments required before progressing</div>
+          <div class="setting-desc">How many environments in this phase must have a successful deployment before a release can progress to the next phase. Set to 0 for all.</div>
+        </div>
+        <div class="setting-control">
+          <input type="number" class="num-input" id="drawer-min-envs" value="1" min="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-group-title">Retention Policy</div>
+      <div class="setting-row">
+        <div class="setting-info">
+          <div class="setting-label">Releases to keep</div>
+          <div class="setting-desc">Number of releases to retain for each environment in this phase after deployment.</div>
+        </div>
+        <div class="setting-control">
+          <input type="number" class="num-input" id="drawer-retention" value="3" min="1" max="100">
+        </div>
+      </div>
+    </div>
+
+    <div class="danger-zone">
+      <div class="danger-zone-title">Danger Zone</div>
+      <button class="btn btn-danger btn-sm" onclick="deleteCurrentPhase()">
+        <i class="fas fa-trash-alt"></i> Delete this phase
+      </button>
+    </div>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-ghost" onclick="closeDrawer()">Cancel</button>
+    <button class="btn btn-primary" onclick="saveDrawer()">
+      <i class="fas fa-check"></i> Save settings
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ALL_ENVIRONMENTS = [
+  'Development', 'Dev-US', 'Staging', 'QA',
+  'Prod-US-East', 'Prod-US-West', 'Prod-EU'
+];
+
+let phases = [];
+let drawerPhaseId = null;
+let dragEnv = null;
+let dragColId = null;
+
+function genId() { return '_' + Math.random().toString(36).slice(2,9); }
+
+function assignedEnvs() {
+  return new Set(phases.flatMap(p => p.environments.map(e => e.name)));
+}
+function unassignedEnvs() {
+  const used = assignedEnvs();
+  return ALL_ENVIRONMENTS.filter(e => !used.has(e));
+}
+
+function render() {
+  renderBoard();
+  renderPool();
+  document.getElementById('save-btn').disabled =
+    !document.getElementById('lifecycle-name').value.trim();
+}
+
+function renderBoard() {
+  const scroll = document.getElementById('board-scroll');
+  const addBtn = document.getElementById('add-col-btn');
+  scroll.querySelectorAll('.phase-col').forEach(el => el.remove());
+  phases.forEach(p => {
+    const col = buildColumn(p);
+    scroll.insertBefore(col, addBtn);
+  });
+}
+
+function buildColumn(p) {
+  const col = document.createElement('div');
+  col.className = 'phase-col';
+  col.id = 'col-' + p.id;
+  col.setAttribute('draggable', true);
+
+  const envCount = p.environments.length;
+  const modeLabel = p.settings.mode === 'auto' ? 'Auto deploy' : 'Manual deploy';
+  const modeCls = p.settings.mode === 'auto' ? 'col-badge-auto' : 'col-badge-manual';
+
+  col.innerHTML = `
+    <div class="phase-col-header">
+      <div class="phase-col-top">
+        <span class="col-drag-handle" title="Drag to reorder phase"><i class="fas fa-grip-vertical"></i></span>
+        <input class="phase-col-name" type="text" value="${escHtml(p.name)}"
+          placeholder="Phase name" data-id="${p.id}"
+          oninput="updatePhaseName('${p.id}', this.value)">
+        <button class="col-action-btn" title="Add environment" onclick="quickAddEnv('${p.id}')">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="col-action-btn" title="Phase settings" onclick="openDrawer('${p.id}')">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+      <div class="phase-col-meta">
+        <span>${envCount} environment${envCount !== 1 ? 's' : ''}</span>
+        <span class="col-badge ${modeCls}">${modeLabel}</span>
+      </div>
+    </div>
+    <div class="env-drop-zone" id="dz-${p.id}"
+      ondragover="onDropZoneOver(event, '${p.id}')"
+      ondragleave="onDropZoneLeave(event, '${p.id}')"
+      ondrop="onDropZoneDrop(event, '${p.id}')">
+      ${p.environments.length === 0
+        ? `<div class="drop-hint"><i class="fas fa-arrow-down"></i> Drop environments here</div>`
+        : p.environments.map(env => buildEnvCardHTML(p.id, env)).join('')
+      }
+    </div>
+  `;
+
+  const dropZoneEl = col.querySelector('.env-drop-zone');
+  const poolPanel = document.getElementById('env-pool-panel');
+  if (dropZoneEl && poolPanel) {
+    dropZoneEl.addEventListener('mouseenter', () => poolPanel.classList.add('pool-highlight'));
+    dropZoneEl.addEventListener('mouseleave', () => poolPanel.classList.remove('pool-highlight'));
+  }
+
+  col.addEventListener('dragstart', e => {
+    if (e.target.classList.contains('col-drag-handle') || e.target.closest('.col-drag-handle')) {
+      dragColId = p.id;
+      dragEnv = null;
+      col.classList.add('col-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('type', 'column');
+    }
+  });
+  col.addEventListener('dragover', e => {
+    if (dragColId && dragColId !== p.id) {
+      e.preventDefault();
+      col.style.outline = '2px solid var(--accent)';
+    }
+  });
+  col.addEventListener('dragleave', () => { col.style.outline = ''; });
+  col.addEventListener('drop', e => {
+    col.style.outline = '';
+    if (dragColId && dragColId !== p.id) {
+      e.preventDefault();
+      e.stopPropagation();
+      const fromIdx = phases.findIndex(ph => ph.id === dragColId);
+      const toIdx = phases.findIndex(ph => ph.id === p.id);
+      const [moved] = phases.splice(fromIdx, 1);
+      phases.splice(toIdx, 0, moved);
+      dragColId = null;
+      render();
+    }
+  });
+  col.addEventListener('dragend', () => {
+    col.classList.remove('col-dragging');
+    col.style.outline = '';
+    dragColId = null;
+  });
+
+  col.querySelectorAll('.env-card').forEach(card => {
+    card.addEventListener('dragstart', e => {
+      e.stopPropagation();
+      dragEnv = { name: card.dataset.env, fromPhaseId: p.id };
+      dragColId = null;
+      card.classList.add('card-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('type', 'env');
+    });
+    card.addEventListener('dragend', () => card.classList.remove('card-dragging'));
+  });
+
+  return col;
+}
+
+function buildEnvCardHTML(phaseId, env) {
+  return `<div class="env-card" draggable="true" data-env="${escHtml(env.name)}" data-phase="${phaseId}">
+    <span class="env-card-icon"><i class="fas fa-server"></i></span>
+    <span class="env-card-name">${escHtml(env.name)}</span>
+    <span class="env-card-badge ${env.auto ? 'badge-auto' : 'badge-manual'}"
+      onclick="toggleEnvAuto('${phaseId}', '${escHtml(env.name)}')" title="Click to toggle">
+      ${env.auto ? 'Auto' : 'Manual'}
+    </span>
+    <button class="env-card-remove" onclick="removeEnv('${phaseId}', '${escHtml(env.name)}')" title="Remove">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>`;
+}
+
+function renderPool() {
+  const body = document.getElementById('pool-body');
+  const unassigned = unassignedEnvs();
+  if (unassigned.length === 0) {
+    body.innerHTML = `
+      <div class="pool-section-label">Available</div>
+      <div class="pool-assigned"><i class="fas fa-check-circle" style="color:var(--success);font-size:18px;display:block;margin-bottom:8px"></i>All environments are assigned to phases.</div>`;
+    return;
+  }
+  body.innerHTML = `<div class="pool-section-label">Drag into a phase &rarr;</div>` +
+    unassigned.map(envName => `
+      <div class="pool-env-card" draggable="true" data-env="${escHtml(envName)}"
+        ondragstart="onPoolDragStart(event, '${escHtml(envName)}')"
+        ondragend="onPoolDragEnd(event)">
+        <span class="pool-env-card-icon"><i class="fas fa-server"></i></span>
+        <span class="pool-env-card-name">${escHtml(envName)}</span>
+      </div>`).join('');
+}
+
+function onPoolDragStart(e, envName) {
+  dragEnv = { name: envName, fromPhaseId: null };
+  dragColId = null;
+  e.target.classList.add('card-dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('type', 'env');
+}
+function onPoolDragEnd(e) { e.target.classList.remove('card-dragging'); }
+
+function onDropZoneOver(e, phaseId) {
+  if (!dragEnv) return;
+  e.preventDefault();
+  e.stopPropagation();
+  document.getElementById('dz-' + phaseId).classList.add('drop-active');
+}
+function onDropZoneLeave(e, phaseId) {
+  document.getElementById('dz-' + phaseId).classList.remove('drop-active');
+}
+function onDropZoneDrop(e, toPhaseId) {
+  e.preventDefault();
+  e.stopPropagation();
+  document.getElementById('dz-' + toPhaseId).classList.remove('drop-active');
+  if (!dragEnv) return;
+  const { name, fromPhaseId } = dragEnv;
+  dragEnv = null;
+  const toPhase = phases.find(p => p.id === toPhaseId);
+  if (!toPhase) return;
+  if (toPhase.environments.find(e => e.name === name)) return;
+  if (fromPhaseId) {
+    const fromPhase = phases.find(p => p.id === fromPhaseId);
+    if (fromPhase) {
+      const env = fromPhase.environments.find(e => e.name === name);
+      const wasAuto = env ? env.auto : true;
+      fromPhase.environments = fromPhase.environments.filter(e => e.name !== name);
+      toPhase.environments.push({ name, auto: wasAuto });
+    }
+  } else {
+    toPhase.environments.push({ name, auto: true });
+  }
+  render();
+  showToast(name + ' moved to ' + (toPhase.name || 'phase'));
+}
+
+function addPhase() {
+  const p = {
+    id: genId(), name: '',
+    environments: [],
+    settings: { mode: 'auto', minEnvs: 1, retention: 3 }
+  };
+  phases.push(p);
+  render();
+  setTimeout(() => {
+    const input = document.querySelector('#col-' + p.id + ' .phase-col-name');
+    if (input) input.focus();
+  }, 50);
+}
+
+function updatePhaseName(id, val) {
+  const p = phases.find(p => p.id === id);
+  if (p) p.name = val;
+  document.getElementById('save-btn').disabled =
+    !document.getElementById('lifecycle-name').value.trim();
+}
+
+function removeEnv(phaseId, envName) {
+  const p = phases.find(p => p.id === phaseId);
+  if (p) p.environments = p.environments.filter(e => e.name !== envName);
+  render();
+}
+
+function toggleEnvAuto(phaseId, envName) {
+  const p = phases.find(p => p.id === phaseId);
+  if (!p) return;
+  const env = p.environments.find(e => e.name === envName);
+  if (env) { env.auto = !env.auto; render(); }
+}
+
+function quickAddEnv(phaseId) {
+  const p = phases.find(p => p.id === phaseId);
+  if (!p) return;
+  const available = ALL_ENVIRONMENTS.filter(e => !phases.some(ph => ph.environments.some(ev => ev.name === e)));
+  if (available.length === 0) { showToast('All environments are already assigned'); return; }
+  const envName = available[0];
+  p.environments.push({ name: envName, auto: true });
+  render();
+  showToast('Added ' + envName + ' to ' + (p.name || 'phase'));
+}
+
+function openDrawer(phaseId) {
+  drawerPhaseId = phaseId;
+  const p = phases.find(p => p.id === phaseId);
+  if (!p) return;
+  document.getElementById('drawer-title').textContent = 'Phase Settings - ' + (p.name || 'Unnamed phase');
+  document.querySelectorAll('input[name="deploy-mode"]').forEach(r => r.checked = (r.value === p.settings.mode));
+  document.getElementById('drawer-min-envs').value = p.settings.minEnvs;
+  document.getElementById('drawer-retention').value = p.settings.retention;
+  document.getElementById('settings-drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+function closeDrawer() {
+  document.getElementById('settings-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  drawerPhaseId = null;
+}
+function saveDrawer() {
+  const p = phases.find(p => p.id === drawerPhaseId);
+  if (p) {
+    document.querySelectorAll('input[name="deploy-mode"]').forEach(r => { if (r.checked) p.settings.mode = r.value; });
+    p.settings.minEnvs = parseInt(document.getElementById('drawer-min-envs').value) || 1;
+    p.settings.retention = parseInt(document.getElementById('drawer-retention').value) || 3;
+  }
+  closeDrawer();
+  render();
+  showToast('Phase settings saved');
+}
+function deleteCurrentPhase() {
+  const p = phases.find(p => p.id === drawerPhaseId);
+  const name = p ? (p.name || 'Unnamed phase') : 'phase';
+  phases = phases.filter(p => p.id !== drawerPhaseId);
+  closeDrawer();
+  render();
+  showToast('Phase "' + name + '" removed');
+}
+
+function onNameInput(val) {
+  document.getElementById('save-btn').disabled = !val.trim();
+}
+function saveLifecycle() {
+  const name = document.getElementById('lifecycle-name').value.trim();
+  showToast('Lifecycle "' + name + '" saved! (prototype demo)');
+}
+function resetForm() {
+  document.getElementById('lifecycle-name').value = '';
+  document.getElementById('lifecycle-desc').value = '';
+  phases = [];
+  render();
+  showToast('Form reset');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+render();
+</script>
+</body>
+</html>
