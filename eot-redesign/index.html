@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EOT Redesign — Shoham Samuel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #0d1117;
+    --ink-2:  #3d4550;
+    --ink-3:  #6b7280;
+    --rule:   #e5e7eb;
+    --bg:     #ffffff;
+    --bg-warm:#fafaf9;
+    --bg-gray:#f6f6f6;
+    --accent: #7673fe;
+    --f-serif:'Instrument Serif', Georgia, serif;
+    --f-sans: 'Inter', system-ui, sans-serif;
+  }
+
+  body { font-family: var(--f-sans); color: var(--ink); background: var(--bg); line-height: 1.6; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Nav ────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 60px;
+  }
+  .nav-logo { font-family: var(--f-serif); font-style: italic; font-size: 20px; }
+  .nav-name { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+  .nav-back { font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; }
+  .nav-back:hover { color: var(--ink); }
+
+  /* ── Hero ───────────────────────────────────────────────── */
+  .hero {
+    margin-top: 60px;
+    position: relative;
+    line-height: 0;
+  }
+  .hero img { width: 100%; display: block; }
+  .hero-title {
+    position: absolute;
+    top: 50%; left: 8%;
+    transform: translateY(-50%);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(46px, 7vw, 80px);
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+
+  .hero-meta {
+    padding: 32px 120px;
+    display: flex; gap: 48px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .meta-value { font-size: 14px; color: var(--ink-2); }
+
+  /* ── Content ────────────────────────────────────────────── */
+  .content { max-width: 740px; margin: 0 auto; padding: 80px 24px; }
+
+  .section { margin-bottom: 72px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 32px;
+  }
+  h2 {
+    font-family: var(--f-serif);
+    font-size: clamp(28px, 4vw, 40px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-family: var(--f-sans);
+    font-size: 18px; font-weight: 600;
+    color: var(--ink); margin-bottom: 12px;
+  }
+  p { font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { font-size: 17px; color: var(--ink-2); line-height: 1.75; padding-left: 24px; margin-bottom: 16px; }
+  li { margin-bottom: 8px; }
+  li:last-child { margin-bottom: 0; }
+
+  /* ── Full-width image ───────────────────────────────────── */
+  .full-img {
+    width: 100%; margin: 32px 0;
+    background: var(--bg-warm);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .full-img img { width: 100%; display: block; }
+  .img-caption {
+    font-size: 13px; color: var(--ink-3); font-style: italic;
+    text-align: center; padding: 12px 24px 16px;
+  }
+
+  /* ── Wide image (bleeds wider than text column) ─────────── */
+  .wide-img {
+    margin: 40px -120px;
+    background: var(--bg-warm);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  .wide-img img { width: 100%; display: block; }
+  .wide-img .img-caption {
+    font-size: 13px; color: var(--ink-3); font-style: italic;
+    text-align: center; padding: 12px 24px 16px;
+  }
+
+  /* ── Screenshot grid ────────────────────────────────────── */
+  .screenshot {
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .screenshot img { width: 100%; display: block; }
+  .screenshot-caption {
+    font-size: 12px; color: var(--ink-3);
+    padding: 8px 12px; background: var(--bg-warm);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── Prototype card ─────────────────────────────────────── */
+  .prototype-card {
+    margin: 48px 0;
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .prototype-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .prototype-header h3 { margin-bottom: 4px; }
+  .prototype-header p { margin: 0; font-size: 15px; }
+  .prototype-gif {
+    background: #092d2e;
+    padding: 8px;
+  }
+  .prototype-gif img { width: 100%; display: block; border-radius: 6px; }
+  .prototype-recap {
+    background: var(--bg-gray);
+    padding: 32px;
+    border-top: 1px solid var(--rule);
+  }
+  .prototype-recap h4 {
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .prototype-recap-img {
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+  }
+  .prototype-recap-img img { width: 100%; display: block; }
+
+  /* ── Callout ────────────────────────────────────────────── */
+  .callout {
+    background: #f0efff; border: 1px solid #c5c4ff;
+    border-radius: 8px; padding: 20px 24px; margin: 32px 0;
+  }
+  .callout p { color: var(--ink-2); margin: 0; font-size: 16px; }
+
+  /* ── Activity icons ─────────────────────────────────────── */
+  .activities {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    justify-content: center;
+    margin: 32px 0;
+  }
+  .activity {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+  }
+  .activity-icon {
+    width: 66px; height: 66px;
+    flex-shrink: 0;
+  }
+  .activity-icon img {
+    width: 66px; height: 66px;
+    display: block;
+  }
+  .activity-label {
+    font-size: 13px; font-weight: 500; color: var(--accent);
+  }
+
+  /* ── Carousel ───────────────────────────────────────────── */
+  .carousel {
+    position: relative; margin: 24px 0 48px;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    width: 100%;
+  }
+  .carousel-track {
+    display: flex;
+    width: 100%;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+  }
+  .carousel-slide {
+    width: 100%; flex: 0 0 100%;
+    display: flex; justify-content: center; align-items: center;
+    background: var(--bg);
+  }
+  .carousel-slide img { max-width: 100%; display: block; }
+  .carousel-btn {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--ink-2);
+    transition: background 0.15s;
+    z-index: 2;
+  }
+  .carousel-btn:hover { background: #fff; color: var(--ink); }
+  .carousel-btn.prev { left: 12px; }
+  .carousel-btn.next { right: 12px; }
+  .carousel-dots {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 12px 0 14px;
+    background: var(--bg);
+    border-top: 1px solid var(--rule);
+  }
+  .carousel-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--rule); border: none; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .carousel-dot.active { background: var(--accent); }
+
+  /* ── Star rating ────────────────────────────────────────── */
+  .star-heading {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .star-heading h4 { margin: 0; font-family: var(--f-serif); font-size: clamp(28px, 4vw, 40px); font-style: italic; font-weight: 400; color: var(--ink); line-height: 1.2; }
+  .stars { display: flex; gap: 6px; align-items: center; }
+  .star { width: 28px; height: 28px; }
+
+  /* ── Divider ────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--rule); margin: 0; }
+
+  /* ── Gray section band ──────────────────────────────────── */
+  .band {
+    background: var(--bg-gray);
+    padding: 64px 0;
+    margin: 0 -24px;
+  }
+  .band .content { padding-top: 0; padding-bottom: 0; }
+
+  /* ── Back link ──────────────────────────────────────────── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: var(--ink-3);
+    padding: 0 24px 80px;
+    max-width: 740px; margin: 0 auto;
+    display: block;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 13px; color: var(--ink-3); }
+  .footer-links { display: flex; gap: 24px; font-size: 13px; color: var(--ink-3); }
+  .footer-links a:hover { color: var(--ink); }
+
+  /* ── Lightbox ───────────────────────────────────────────── */
+  #lightbox { display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.92); cursor: zoom-out;
+    align-items: center; justify-content: center; }
+  #lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; border-radius: 6px; }
+
+  @media (max-width: 768px) {
+    .hero { padding: 60px 32px; min-height: auto; }
+    .hero-img { display: none; }
+    .hero-meta { padding: 24px 32px; flex-wrap: wrap; gap: 24px; }
+    .content { padding: 48px 20px; }
+    .wide-img { margin: 32px -20px; }
+    nav { padding: 0 20px; }
+    footer { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="/">Works</a>
+  <a class="nav-back" href="/">← Back</a>
+</nav>
+
+<div class="hero">
+  <img src="images/landing.png" alt="Atera Purchase Pages Redesign">
+  <p class="hero-title">Purchase<br>Pages<br>Redesign</h2>
+</div>
+
+<div class="hero-meta">
+  <div class="meta-item">
+    <span class="meta-label">Company</span>
+    <span class="meta-value">Atera</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Role</span>
+    <span class="meta-value">Product Designer</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Squad</span>
+    <span class="meta-value">Billing &amp; Subscription</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Type</span>
+    <span class="meta-value">Journey Mapping · Prototyping · UI Design</span>
+  </div>
+</div>
+
+<main>
+  <div class="content">
+
+    <!-- About -->
+    <section class="section">
+      <h2>About</h2>
+      <h2>Redesigning the purchase pages of Atera</h2>
+      <p>Atera is a SaaS management platform used by IT professionals. As the product designer in the billing and subscription squad, I led the project. My work included investigating the data, desk research, prototyping, working with the product researcher, and of course designing the purchase page based on the results of the study.</h2>
+
+      <h3 style="margin-top: 32px;">Contents</h3>
+      <ol>
+        <li>The current state of the purchase pages</li>
+        <li>Project kick off</li>
+        <li>User testing</li>
+        <li>Design suggestion</li>
+      </ol>
+
+      <div class="activities">
+        <div class="activity">
+          <div class="activity-icon"><img src="images/icon-prototyping.svg" alt="Prototyping"></div>
+          <span class="activity-label">Prototyping</span>
+        </div>
+        <div class="activity">
+          <div class="activity-icon"><img src="images/icon-journey-mapping.svg" alt="Journey Mapping"></div>
+          <span class="activity-label">Journey Mapping</span>
+        </div>
+        <div class="activity">
+          <div class="activity-icon"><img src="images/icon-sketching.svg" alt="Sketching"></div>
+          <span class="activity-label">Sketching</span>
+        </div>
+        <div class="activity">
+          <div class="activity-icon"><img src="images/icon-wireframing.svg" alt="Wireframing"></div>
+          <span class="activity-label">Wireframing</span>
+        </div>
+        <div class="activity">
+          <div class="activity-icon"><img src="images/icon-ui-design.svg" alt="UI Design"></div>
+          <span class="activity-label">UI Design</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- The Current Situation -->
+    <section class="section" style="margin-top: 72px;">
+      <h2>The Current Situation</h2>
+
+      <h3>End Of Trial Purchase Page</h3>
+      <p>Atera has a zero touch purchase model. That is, users create an account and get access to the software for 30 days. After their trial has ended when logging in, the users see the End Of Trial purchase page.</h2>
+      <div class="full-img">
+        <img src="images/eot-page.png" alt="End of Trial purchase page">
+        <div class="img-caption">Visually, the software is locked. In order to unlock it the user must go through the payment wall and purchase a subscription.</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">Trial Purchase Page</h3>
+      <p>During the trial the user can purchase the software at any time.</h2>
+      <div class="full-img">
+        <img src="images/trial-page.png" alt="Trial purchase page">
+        <div class="img-caption">Visually, the user experience is similar between the pages.</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">Project's Kickoff</h3>
+      <p>The purchase pages were written in aspx technology and didn't behave as part of the Atera platform. This caused quite a few issues and was decided as a tech debt to rewrite the page. Rewriting the page gave us the opportunity to redesign it.</h2>
+
+      <h3 style="margin-top: 32px;">However</h3>
+      <ol>
+        <li>We had very little data gathering abilities for these pages.</li>
+        <li>Since the context of the project was a tech debt, we didn't have the capacity to properly A/B test.</li>
+      </ol>
+    </section>
+
+    <hr class="divider">
+
+    <!-- The Data We Did Have -->
+    <section class="section" style="margin-top: 72px;">
+      <h2>The Data We Did Have</h2>
+
+      <h3>Purchase Pages Conversion Rate</h3>
+      <p>In the below image we can see users who viewed the purchase page and how many of them actually purchased. The <span style="color: #725cf6; font-weight: 600;">purple</span> represents the Trial purchase page. The <span style="color: #ee7c60; font-weight: 600;">red</span> represents the End Of Trial purchase page.</h2>
+      <div class="full-img">
+        <img src="images/data-110.png" alt="Purchase pages conversion rate">
+        <div class="img-caption">Data is from 03 – 09 / 2022</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">When Do Users Purchase?</h3>
+      <p>In the below image we can see that most of the users purchase on day 29 of their trial. The general assumption is that they do that to maximize their trial period. However, there are quite a few who purchase the day after — when their trial expires — and then there's a "tail" of purchases following.</h2>
+      <div class="full-img">
+        <img src="images/data-111.png" alt="When do users purchase chart">
+        <div class="img-caption">Data is from 09 / 2021 – 09 / 2022</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">Clicks Heat Map from FullStory</h3>
+      <p>We can see here that most of the engagement takes place on the right side of the page. I assume that users would interact with that area to understand what the purchase will cost them.</h2>
+      <div class="full-img">
+        <img src="images/data-112.png" alt="Clicks heat map from FullStory">
+        <div class="img-caption">Data is from 06 – 09 / 2022</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">UX Issue</h3>
+      <div class="full-img">
+        <img src="images/fullstory.png" alt="FullStory recording example">
+        <div class="img-caption">FullStory recording example</div>
+      </div>
+      <p>Let's say you're going shopping. What would the experience feel like if the salesman kept asking you if you want to pay?</h2>
+      <p>In our case the required credentials are stuck in front of the user's face throughout the whole purchase process. This is kind of what's happening above — the user customizes the plan, then naturally clicks on the subscribe button, but forgot to input their credentials first.</h2>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Desk Research -->
+    <section class="section" style="margin-top: 72px;">
+      <h2>Desk Research</h2>
+      <h2>Next step — desk research</h2>
+      <p>To gain a better understanding of the industry's standards and best practices I set out on a journey of inspecting various purchase pages from different SaaS companies.</h2>
+      <div class="full-img">
+        <img src="images/data-115.png" alt="Research page in Figma">
+        <div class="img-caption">My research page in Figma</div>
+      </div>
+
+      <h3>Platforms Researched</h3>
+      <p>I looked at end of trial, purchase and pricing pages across 15+ SaaS companies.</p>
+      <div class="full-img">
+        <img src="images/frame-7282.png" alt="Platforms Researched — logos of Monday, Wix, Asana, Zendesk, Box, HubSpot, Spotify, GitHub, Figma and more">
+      </div>
+
+      <h3 style="margin-top: 32px;">What We Understood</h3>
+      <ol>
+        <li>It makes sense to split the process into two digestible steps.</li>
+        <li>We should present the contents of each plan.</li>
+        <li>We need a clear summary to show the user what they're buying.</li>
+      </ol>
+
+      <h3 style="margin-top: 32px;">However, we still had open questions</h3>
+      <p>Three of them to be precise:</h2>
+
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+          <div style="font-family: 'Instrument Serif', Georgia, serif; font-size: 40px; font-weight: 400; font-style: italic; color: #023233; flex-shrink: 0; line-height: 1;">1</div>
+          <p style="margin: 0;">How to present the contents of each plan? (all the features? Expand / collapse? All the previous plus? etc.)</p>
+        </div>
+      </div>
+
+      <div class="carousel" id="research-carousel" style="margin-top: 20px;">
+        <div class="carousel-track" id="research-track">
+          <div class="carousel-slide"><img src="images/research-q1.png" alt="Research: presenting plan contents"></div>
+          <div class="carousel-slide"><img src="images/research-q2.png" alt="Research: Network Discovery placement"></div>
+          <div class="carousel-slide"><img src="images/research-q3.png" alt="Research: billing cycle handling"></div>
+        </div>
+        <button class="carousel-btn prev" onclick="carouselMove('research', -1)" aria-label="Previous">&#8249;</button>
+        <button class="carousel-btn next" onclick="carouselMove('research', 1)" aria-label="Next">&#8250;</button>
+        <div class="carousel-dots" id="research-dots">
+          <button class="carousel-dot active" onclick="carouselGo('research', 0)"></button>
+          <button class="carousel-dot" onclick="carouselGo('research', 1)"></button>
+          <button class="carousel-dot" onclick="carouselGo('research', 2)"></button>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+          <div style="font-family: 'Instrument Serif', Georgia, serif; font-size: 40px; font-weight: 400; font-style: italic; color: #023233; flex-shrink: 0; line-height: 1;">2</div>
+          <p style="margin: 0;">Part of the purchase process in Atera is selecting Network Discovery, an add-on that can be purchased in addition to the Atera subscription. Should it be on the main page or its own step?</p>
+        </div>
+      </div>
+
+      <div class="carousel" id="research2-carousel" style="margin-top: 20px;">
+        <div class="carousel-track" id="research2-track">
+          <div class="carousel-slide"><img src="images/research2-1.png" alt="Research: Network Discovery placement 1"></div>
+          <div class="carousel-slide"><img src="images/research2-2.png" alt="Research: Network Discovery placement 2"></div>
+          <div class="carousel-slide"><img src="images/research2-3.png" alt="Research: Network Discovery placement 3"></div>
+        </div>
+        <button class="carousel-btn prev" onclick="carouselMove('research2', -1)" aria-label="Previous">&#8249;</button>
+        <button class="carousel-btn next" onclick="carouselMove('research2', 1)" aria-label="Next">&#8250;</button>
+        <div class="carousel-dots" id="research2-dots">
+          <button class="carousel-dot active" onclick="carouselGo('research2', 0)"></button>
+          <button class="carousel-dot" onclick="carouselGo('research2', 1)"></button>
+          <button class="carousel-dot" onclick="carouselGo('research2', 2)"></button>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 20px; align-items: flex-start;">
+          <div style="font-family: 'Instrument Serif', Georgia, serif; font-size: 40px; font-weight: 400; font-style: italic; color: #023233; flex-shrink: 0; line-height: 1;">3</div>
+          <p style="margin: 0; flex: 1;">How should billing cycle selection be handled across both the plan and Network Discovery?</p>
+          <div style="flex-shrink: 0; border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; background: var(--bg); padding: 16px 20px;">
+            <img src="images/research3-network-discovery.png" alt="Network Discovery billing" style="display: block; max-height: 120px; width: auto;">
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top: 24px;">Our goal was to answer those questions and bring confidence to our design suggestions.</p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- User Testing -->
+    <section class="section" style="margin-top: 72px;">
+      <h2>User Testing</h2>
+
+      <h3>Research Context</h3>
+      <p>We consulted with a product researcher — Danielle Jaffit, an external consultant for the company. We decided to test 3 clickable prototypes with users to determine which journey is clearest. We talked to:</h2>
+      <ul>
+        <li>10 users who have recently purchased</li>
+        <li>Half who purchased Network Discovery and half that didn't</li>
+      </ul>
+
+      <div class="full-img" style="margin-top: 32px;">
+        <img src="images/data-113.png" alt="Prototype flow map">
+        <div class="img-caption">Spaghetti monster — the Figma prototype I built</div>
+      </div>
+
+      <h3 style="margin-top: 40px;">Research Limitations</h3>
+      <p>Users used this as a proxy support call. Makes sense — they recently purchased the product.</h2>
+
+      <h3 style="margin-top: 40px;">The 3 Tests</h3>
+      <ol>
+        <li>Short</li>
+        <li>All in one</li>
+        <li>Network Discovery as a separate step</li>
+      </ol>
+      <p>Here's what each looked like:</h2>
+    </section>
+
+  </div><!-- /content -->
+
+  <hr class="divider">
+
+  <!-- Prototype #1 -->
+  <div style="background: var(--bg); padding: 64px 0;">
+    <div class="content" style="padding-top: 0; padding-bottom: 0;">
+      <h3 style="margin-bottom: 4px;">#1 Very Short</h3>
+      <p>Very similar to Atera's current purchase page.</h2>
+    </div>
+    <div style="margin: 24px 0; background: var(--bg); padding: 24px; display: flex; justify-content: center;">
+      <video src="images/proto-1.mov" controls loop muted playsinline style="width: 75%; max-width: 100%; display: block; border-radius: 6px;"></video>
+    </div>
+    <div style="background: var(--bg-gray); padding: 48px 0;">
+      <div class="content" style="padding-top: 0; padding-bottom: 0;">
+        <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">Recap</h4>
+        <div class="full-img">
+          <img src="images/pp-1.png" alt="Prototype 1 recap">
+        </div>
+        <div class="star-heading" style="margin-top: 24px;">
+          <h4>Test Results</h4>
+          <div class="stars">
+            <!-- 1/6 -->
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <ul>
+          <li>Described as — "Pricing plans with no context".</li>
+          <li>Challenges — Payment screen is very cluttered.</li>
+          <li>Requests — Add-on on a separate screen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Prototype #2 -->
+  <div style="background: var(--bg); padding: 64px 0;">
+    <div class="content" style="padding-top: 0; padding-bottom: 0;">
+      <h3 style="margin-bottom: 4px;">#2 All in One</h3>
+      <p>Customization — selecting the billing cycle, choosing the amount of seats and Network Discovery — is all done on the same page as the plan selection.</h2>
+    </div>
+    <div style="margin: 24px 0; background: var(--bg); padding: 24px; display: flex; justify-content: center;">
+      <video src="images/proto-2.mov" controls loop muted playsinline style="width: 75%; max-width: 100%; display: block; border-radius: 6px;"></video>
+    </div>
+    <div style="background: var(--bg-gray); padding: 48px 0;">
+      <div class="content" style="padding-top: 0; padding-bottom: 0;">
+        <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">Recap</h4>
+        <div class="full-img">
+          <img src="images/pp-2.png" alt="Prototype 2 recap">
+        </div>
+        <div class="star-heading" style="margin-top: 24px;">
+          <h4>Test Results</h4>
+          <div class="stars">
+            <!-- 3/6 -->
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <ul>
+          <li>Described as — "I like having everything in one place".</li>
+          <li>Challenges — Power feels like it has fewer options than Growth and Pro.</li>
+          <li>Requests — Network Discovery shouldn't be on the main page.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Prototype #3 -->
+  <div style="background: var(--bg); padding: 64px 0;">
+    <div class="content" style="padding-top: 0; padding-bottom: 0;">
+      <h3 style="margin-bottom: 4px;">#3 Network Discovery as a Separate Step</h3>
+      <p>Adding a third step to the 2-step journey — Network Discovery.</h2>
+    </div>
+    <div style="margin: 24px 0; background: var(--bg); padding: 24px; display: flex; justify-content: center;">
+      <video src="images/proto-3.mov" controls loop muted playsinline style="width: 75%; max-width: 100%; display: block; border-radius: 6px;"></video>
+    </div>
+    <div style="background: var(--bg-gray); padding: 48px 0;">
+      <div class="content" style="padding-top: 0; padding-bottom: 0;">
+        <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">Recap</h4>
+        <div class="full-img">
+          <img src="images/pp-3.png" alt="Prototype 3 recap">
+        </div>
+        <div class="star-heading" style="margin-top: 24px;">
+          <h4>Test Results</h4>
+          <div class="stars">
+            <!-- 6/6 -->
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            <svg class="star" viewBox="0 0 24 24" fill="#ff2d78" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l7.1-1.01L12 2z" stroke="#ff2d78" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <ul>
+          <li>Described as — "Much better overview, with the add-on on its own".</li>
+          <li>Challenges — Network Discovery might seem like an upsell.</li>
+          <li>Requests — Make the billing cycle clear for both the plan and Network Discovery.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Final Design -->
+  <div class="content">
+    <section class="section" style="margin-top: 72px;">
+      <h2>Final Design</h2>
+      <h2>End Of Trial Purchase Page</h2>
+      <p>We incorporated the test results and finalized the design, taking a "mix and match" approach — using what worked best from each test. Here's what it looked like:</h2>
+
+      <h3 style="margin-top: 40px;">First page — Plan Selection &amp; Customization</h3>
+      <div class="full-img" style="margin-top: 16px;">
+        <img src="images/final-plan-selection.png" alt="Final design — Plan selection page">
+      </div>
+      <ol>
+        <li>We put all the customization on the plan selection page. It made sense because it allows the user to get a better understanding of what their subscription will cost.</li>
+        <li>The plan contents are presented as a comparison table, helping the user see which plan best suits them.</li>
+        <li>On the bottom we added a summary that also serves as breadcrumbs to reflect the purchase process.</li>
+      </ol>
+
+      <h3 style="margin-top: 48px;">Second page — Network Discovery</h3>
+      <div class="full-img" style="margin-top: 16px;">
+        <img src="images/final-network-discovery.png" alt="Final design — Network Discovery page">
+      </div>
+      <ol>
+        <li>Network Discovery as its own step helps change the "sneaky" behavior of having it checked in by default.</li>
+        <li>The Atera billing cycle will affect Network Discovery's. If the user selected monthly for Atera, it'll be locked here in monthly as well. When attempting to change it the user will get a tooltip explaining that.</li>
+      </ol>
+
+      <h3 style="margin-top: 48px;">Third page — Checkout</h3>
+      <div class="full-img" style="margin-top: 16px;">
+        <img src="images/final-checkout.png" alt="Final design — Checkout page">
+      </div>
+      <p>Static summary — all the customization has been done already. All that's left now is the checkout.</h2>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Closing Thoughts -->
+    <section class="section" style="margin-top: 72px;">
+      <h2>Closing Thoughts</h2>
+      <h2>Questions I received along the way</h2>
+
+      <h3>Did we perhaps emphasize Network Discovery too much?</h3>
+      <p>Even with the current behavior of opting in by default, we didn't get complaints from users that they were "lured" into selecting Network Discovery. Apparently users select Network Discovery for its capabilities. So we might be doing them a service by implementing transparency to the process and offering an explanation of what Network Discovery is.</h2>
+
+      <h3 style="margin-top: 32px;">What were our KPIs for success?</h3>
+      <p>Since conversion rates were known (around 20%), we'd like to see them go up, or at the very least not change.</h2>
+
+      <h3 style="margin-top: 32px;">So why embark on this journey in the first place?</h3>
+      <p>Atera strives to be a leading SaaS company in general, and specifically in its domain. As such, its main entrance gate can't look like a phishing scam (actual feedback we received). Think for example what you'd feel if, before completing a purchase, you notice a typo error.</h2>
+      <p>In my opinion, a good experience is a wholesome experience — from the onboarding, using the product and its features, and at the end — the purchase and payment process.</h2>
+    </section>
+
+  </div><!-- /content -->
+
+  <hr class="divider">
+
+  <div class="content" style="padding-bottom: 80px;">
+    <section class="section">
+      <h2>That's A Wrap</h2>
+      <p style="color: #4f6677;">The project was an excellent learning experience. It was the first time we really tested our design on our users prior to development. This gave us a better understanding of what they actually need.</p>
+      <p style="color: #4f6677;">It was a personal acheivment for me, to lead and manage this process.</p>
+      <p style="color: #4f6677;">What did you think?</p>
+    </section>
+  </div>
+
+  <a class="back-link" href="/">← Back to portfolio</a>
+
+</main>
+
+<footer>
+  <span class="footer-copy">&copy; 2025 Shoham Samuel</span>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/shoham-samuel" target="_blank">LinkedIn</a>
+    <a href="mailto:shohamsam@gmail.com">Email</a>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div id="lightbox" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);cursor:zoom-out;align-items:center;justify-content:center;">
+  <img id="lightbox-img" style="max-width:92vw;max-height:92vh;object-fit:contain;border-radius:6px;">
+</div>
+
+<script>
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightbox-img');
+
+  document.querySelectorAll('.full-img img, .wide-img img, .screenshot img, img[alt]').forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lb.style.display = 'flex';
+    });
+  });
+
+  lb.addEventListener('click', () => {
+    lb.style.display = 'none';
+    lbImg.src = '';
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { lb.style.display = 'none'; lbImg.src = ''; }
+  });
+
+  // ── Carousel ──────────────────────────────────────────────
+  const carousels = {};
+  function carouselInit(id, count) {
+    carousels[id] = { index: 0, count };
+  }
+  function carouselGo(id, index) {
+    const c = carousels[id];
+    c.index = index;
+    document.getElementById(id + '-track').style.transform = `translateX(-${index * 100}%)`;
+    document.querySelectorAll(`#${id}-dots .carousel-dot`).forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+    });
+  }
+  function carouselMove(id, dir) {
+    const c = carousels[id];
+    carouselGo(id, (c.index + dir + c.count) % c.count);
+  }
+  carouselInit('research', 3);
+  carouselInit('research2', 3);
+</script>
+
+</body>
+</html>
