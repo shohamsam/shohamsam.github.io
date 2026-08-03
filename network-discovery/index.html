@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Discovery — Shoham Samuel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #0d1117;
+    --ink-2:  #3d4550;
+    --ink-3:  #6b7280;
+    --rule:   #e5e7eb;
+    --bg:     #ffffff;
+    --bg-warm:#fafaf9;
+    --bg-gray:#f6f6f6;
+    --accent: #7673fe;
+    --f-serif:'Instrument Serif', Georgia, serif;
+    --f-sans: 'Inter', system-ui, sans-serif;
+  }
+
+  body { font-family: var(--f-sans); color: var(--ink); background: var(--bg); line-height: 1.6; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Nav ────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; height: 60px;
+  }
+  .nav-name { font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; }
+  .nav-back { font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; }
+  .nav-back:hover { color: var(--ink); }
+
+  /* ── Hero ───────────────────────────────────────────────── */
+  .hero {
+    margin-top: 60px;
+    position: relative;
+    line-height: 0;
+  }
+  .hero img.hero-bg { width: 100%; display: block; }
+  .hero-overlay {
+    position: absolute;
+    left: 7%;
+    bottom: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .hero-logo { width: 48px; height: auto; display: block; }
+  .hero-title {
+    font-family: var(--f-serif);
+    font-size: clamp(46px, 7vw, 80px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.05;
+  }
+  .hero-subtitle {
+    font-family: var(--f-sans);
+    font-size: clamp(12px, 1.2vw, 15px);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  /* ── Meta bar ───────────────────────────────────────────── */
+  .hero-meta {
+    padding: 32px 120px;
+    display: flex; gap: 48px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 4px; }
+  .meta-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+  .meta-value { font-size: 14px; color: var(--ink-2); }
+
+  /* ── Content ────────────────────────────────────────────── */
+  .content { max-width: 740px; margin: 0 auto; padding: 80px 24px; }
+  .section { margin-bottom: 64px; }
+
+  h2 {
+    font-family: var(--f-serif);
+    font-size: clamp(28px, 4vw, 40px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  h3 {
+    font-family: var(--f-sans);
+    font-size: 18px; font-weight: 600;
+    color: var(--ink); margin-bottom: 10px;
+    margin-top: 32px;
+  }
+  h3:first-child { margin-top: 0; }
+  p { font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 16px; }
+  p:last-child { margin-bottom: 0; }
+  ul { font-size: 17px; color: var(--ink-2); line-height: 1.75; padding-left: 24px; margin-bottom: 16px; }
+  li { margin-bottom: 6px; }
+  li:last-child { margin-bottom: 0; }
+
+  /* ── Images ─────────────────────────────────────────────── */
+  .full-img {
+    width: 100%; margin: 28px 0;
+    background: var(--bg-warm);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .full-img img { width: 100%; display: block; }
+  .img-caption {
+    font-size: 13px; color: var(--ink-3); font-style: italic;
+    text-align: center; padding: 10px 24px 14px;
+  }
+
+  .wide-img {
+    margin: 36px -120px;
+    background: var(--bg-warm);
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid var(--rule);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .wide-img img { width: 100%; display: block; }
+  .wide-img .img-caption {
+    font-size: 13px; color: var(--ink-3); font-style: italic;
+    text-align: center; padding: 10px 24px 14px;
+  }
+
+  /* ── Activity icons ─────────────────────────────────────── */
+  .activities {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 48px;
+    margin: 32px 0;
+  }
+  .activities-row {
+    display: flex; gap: 48px; justify-content: center;
+  }
+  .activity {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+  }
+  .activity-icon {
+    width: 66px; height: 66px;
+    flex-shrink: 0;
+  }
+  .activity-icon img {
+    width: 66px; height: 66px;
+    display: block;
+  }
+  .activity-label {
+    font-size: 13px; font-weight: 500;
+    color: var(--accent);
+  }
+
+  /* ── Callout ────────────────────────────────────────────── */
+  .callout {
+    background: #f0efff; border: 1px solid #c5c4ff;
+    border-radius: 8px; padding: 20px 24px; margin: 28px 0;
+  }
+  .callout p { color: var(--ink-2); margin: 0; font-size: 16px; }
+
+  /* ── Gray band ──────────────────────────────────────────── */
+  .band {
+    background: var(--bg-gray);
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .band .content { padding-top: 80px; padding-bottom: 80px; }
+
+  /* ── Stat blocks ────────────────────────────────────────── */
+  .stats {
+    display: flex; gap: 0;
+    margin: 32px 0;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .stat {
+    flex: 1;
+    padding: 28px 24px;
+    border-right: 1px solid var(--rule);
+    text-align: center;
+  }
+  .stat:last-child { border-right: none; }
+  .stat-number {
+    font-family: var(--f-serif);
+    font-size: clamp(32px, 4vw, 48px);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.4;
+  }
+
+  /* ── Divider ────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--rule); margin: 64px 0; }
+
+  /* ── Back link ──────────────────────────────────────────── */
+  .back-link {
+    font-size: 14px; color: var(--ink-3);
+    padding: 0 24px 80px;
+    max-width: 740px; margin: 0 auto;
+    display: block;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-copy { font-size: 13px; color: var(--ink-3); }
+  .footer-links { display: flex; gap: 24px; font-size: 13px; color: var(--ink-3); }
+  .footer-links a:hover { color: var(--ink); }
+
+  /* ── Lightbox ───────────────────────────────────────────── */
+  #lightbox { display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.92); cursor: zoom-out;
+    align-items: center; justify-content: center; }
+  #lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; border-radius: 6px; }
+
+  @media (max-width: 768px) {
+    .hero-meta { padding: 24px 24px; flex-wrap: wrap; gap: 20px; }
+    .content { padding: 48px 20px; }
+    .wide-img { margin: 28px -20px; }
+    nav { padding: 0 20px; }
+    footer { padding: 20px; }
+    .hero-overlay { left: 5%; bottom: 12%; }
+    .hero-logo { width: 32px; }
+    .stats { flex-direction: column; }
+    .stat { border-right: none; border-bottom: 1px solid var(--rule); }
+    .stat:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-name" href="/">Works</a>
+  <a class="nav-back" href="/">← Back</a>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────── -->
+<div class="hero">
+  <img class="hero-bg" src="images/hero.png" alt="Network Discovery — Atera">
+  <div class="hero-overlay">
+    <img class="hero-logo" src="images/atera-logo.png" alt="Atera">
+    <h1 class="hero-title">Network<br>Discovery</h1>
+    <span class="hero-subtitle">Complex System</span>
+  </div>
+</div>
+
+<div class="hero-meta">
+  <div class="meta-item">
+    <span class="meta-label">Company</span>
+    <span class="meta-value">Atera</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Role</span>
+    <span class="meta-value">Product Designer</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Squad</span>
+    <span class="meta-value">Network Discovery &amp; Billing</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Type</span>
+    <span class="meta-value">Journey Mapping · Prototyping · UI Design</span>
+  </div>
+</div>
+
+<!-- ── Opening ──────────────────────────────────────────── -->
+<main>
+<div class="content">
+  <div class="section">
+    <h2>Opening</h2>
+
+    <h3>What is it?</h3>
+    <p>Network Discovery is an add-on provided by Atera which can be purchased in addition to the Atera subscription. Its main use is for the IT technician to keep track of their customer's ever-growing, and ever-changing networks. Successfully doing so is the key to IT support planning, proactive maintenance, and security.</p>
+    <p>This is where the Network Discovery tool comes in handy. It delivers a complete picture of the customer's networks by identifying its components and creating an inventory, with detailed information on each network device. The IT technician can perform scans on their customers' Workgroup and Domain Controller (DC) networks, to discover and monitor all of their customer networks.</p>
+
+    <h3>What does it do?</h3>
+    <p>Network Discovery finds all devices connected to a network (WiFi or ethernet). It scans the entire network, identifies its components, and creates an inventory — with detailed information on each network device.</p>
+    <p>Scans can be performed on both Workgroup and Domain Controller (DC) networks, enabling you to discover all of your customers' networks. Once a scan is activated, it will automatically run in the background at regular intervals (twice a day), so the info stays current.</p>
+
+    <h3>My role</h3>
+    <p>During this project I functioned as the product designer for two teams: the Billing team and the Network Discovery team. I led the project's design while working closely with the product managers. My work included investigating the data, desk research, prototyping, and working with the dedicated CS manager and technical writer to design the various pages of the feature.</p>
+  </div>
+
+  <div class="activities">
+    <div class="activities-row">
+      <div class="activity">
+        <div class="activity-icon"><img src="images/icon-prototyping.svg" alt="Prototyping"></div>
+        <span class="activity-label">Prototyping</span>
+      </div>
+      <div class="activity">
+        <div class="activity-icon"><img src="images/icon-journey-mapping.svg" alt="Journey Mapping"></div>
+        <span class="activity-label">Journey Mapping</span>
+      </div>
+      <div class="activity">
+        <div class="activity-icon"><img src="images/icon-sketching.svg" alt="Sketching"></div>
+        <span class="activity-label">Sketching</span>
+      </div>
+    </div>
+    <div class="activities-row">
+      <div class="activity">
+        <div class="activity-icon"><img src="images/icon-wireframing.svg" alt="Wireframing"></div>
+        <span class="activity-label">Wireframing</span>
+      </div>
+      <div class="activity">
+        <div class="activity-icon"><img src="images/icon-ui-design.svg" alt="UI Design"></div>
+        <span class="activity-label">UI Design</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /content -->
+
+<!-- ── Before the redesign ───────────────────────────────── -->
+<div class="band">
+  <div class="content">
+    <div class="section">
+      <h2>Before the redesign</h2>
+
+      <h3>Scan &amp; scan results</h3>
+      <p>The Network Discovery page is in an empty state. In order to initiate a scan the user has to first select a customer from the dropdown and then select a scanning agent.</p>
+    </div>
+
+    <div class="full-img">
+      <img src="images/select-scan-results.png" alt="Old Network Discovery UI — customer and agent selection">
+      <p class="img-caption">The old Network Discovery page: customers and agents selected via dropdowns, scan history in a separate field.</p>
+    </div>
+
+    <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 28px;">Once the user selects a customer and a scanning agent they must select a specific scan to see its results.</p>
+
+    <div class="full-img">
+      <img src="images/scan-results.png" alt="Old scan results — scrollable page">
+      <p class="img-caption">The user can see the scan results as a long scrollable page. The devices list is under the fold.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── After the redesign ────────────────────────────────── -->
+<div class="content">
+  <div class="section" style="margin-top: 80px;">
+    <h2>After the redesign</h2>
+
+    <h3>Setting up a scan</h3>
+    <p>The Network Discovery page appears, with a list of all the customers.</p>
+  </div>
+
+  <div class="full-img">
+    <img src="images/scan-failed.png" alt="Network Discovery — customers list">
+    <p class="img-caption">The redesigned landing view: all customers listed with their scan status at a glance.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 16px;">The user selects a customer to set up their Network Discovery scan, and clicks <em>Set up scan</em>.</p>
+
+  <div class="full-img">
+    <img src="images/group-2.png" alt="Scan Settings — IP ranges and scanning agents">
+    <p class="img-caption">Scan Settings: the user defines IP ranges, assigns scanning agents per subnet, and can disable individual subnets with a toggle.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 28px;">After selecting the customer's public IP, the user will see all the scanning agents that can be used on that specific subnet. To prevent a scan on a particular subnet, the user clicks the toggle to disable it.</p>
+
+  <div class="section">
+    <h3>Problem: moving networks</h3>
+    <p>What if the customer takes their laptop to work at a café when a scan is scheduled? The potential here is that the scan might "find" a lot of unmonitored devices on an irrelevant network.</p>
+    <p>Our solution: stop the scan if the IP address has changed to prevent scanning of irrelevant networks — and make sure the user is aware of that as well.</p>
+  </div>
+
+  <div class="full-img">
+    <img src="images/scan-failed-detail.png" alt="Scan stopped — IP address changed">
+    <p class="img-caption">When the IP address changes mid-scan, the scan stops and the user is clearly informed why.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── Scan results and actions ───────────────────────── -->
+  <div class="section">
+    <h2>Scan results and actions</h2>
+    <p>Scan results include a Devices section that provides detailed information on network devices, a Reports section that displays informative graphs, and a Security section.</p>
+  </div>
+
+  <div class="section">
+    <h3>Devices</h3>
+    <p>The Devices section includes detailed information on Workstations/Servers, SNMP, and Storage devices, plus it highlights all unmonitored devices by category. Available actions include getting unmonitored devices monitored with one click, as well as filtering and removing devices from the scan results.</p>
+  </div>
+
+  <div class="wide-img">
+    <img src="images/servers.png" alt="Network Discovery — Servers view">
+    <p class="img-caption">The redesigned Servers view, showing discovered devices with real-time status, RTT, device type, and monitoring state.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 12px;">Displayed information includes:</p>
+  <ul style="font-size: 17px; color: var(--ink-2); line-height: 1.75; padding-left: 24px; margin-bottom: 32px;">
+    <li>Number of unmonitored workstations/servers</li>
+    <li>Device Name — clicking it opens the agent console</li>
+    <li>Status — Online or Unreachable</li>
+    <li>Last Seen — last time the device appeared in a network scan</li>
+    <li>Monitored — whether the device has an Atera agent installed</li>
+    <li>RTT (Round-Trip Time) — for detecting devices with network slowness</li>
+    <li>Device Type, IP Address, MAC Address, Manufacturer</li>
+    <li>OS Platform, OS Information, OS Age (DC scans only)</li>
+  </ul>
+
+  <div class="section">
+    <h3>Monitor unmonitored devices</h3>
+    <p>Atera highlights the number of unmonitored devices on a network — a call to action for the IT technician to proactively monitor the network and its devices.</p>
+  </div>
+
+  <div class="full-img">
+    <img src="images/group-4.png" alt="Devices tab — unmonitored count highlighted">
+    <p class="img-caption">Unmonitored device counts shown as badges on each device category tab.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 28px;">The number of unmonitored devices can also be found on the Customers page.</p>
+
+  <div class="full-img">
+    <img src="images/image-224.png" alt="Customers page — unmonitored devices count">
+    <p class="img-caption">Unmonitored device counts surfaced directly on the Customers page, so technicians don't have to drill in to know there's work to do.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 8px;">Here's the flow showing how the user adds devices to their monitored devices list. The user selects the unmonitored device and clicks the <em>Add device</em> button.</p>
+</div><!-- /content -->
+
+<!-- Wide flow images -->
+<div style="max-width: 960px; margin: 0 auto; padding: 0 24px;">
+  <div class="full-img">
+    <img src="images/servers-hover-button.png" alt="Hover state — Add device button">
+    <p class="img-caption">Step 1: hover reveals the Add device action per row.</p>
+  </div>
+  <div class="full-img">
+    <img src="images/servers-loading.png" alt="Loading state — agent being installed">
+    <p class="img-caption">Step 2: agent installation in progress.</p>
+  </div>
+  <div class="full-img">
+    <img src="images/servers-success.png" alt="Success state — device added">
+    <p class="img-caption">Step 3: device successfully added and monitored.</p>
+  </div>
+</div>
+
+<div class="content">
+  <div class="section" style="margin-top: 48px;">
+    <h3>Problem: when the installation fails</h3>
+    <p>What if the agent installation didn't work? This could happen for various reasons — and besides informing the user that there's a problem, how do we let the user know what the issue is?</p>
+  </div>
+
+  <div class="wide-img">
+    <img src="images/servers-failed.png" alt="Servers — Failed installation state">
+    <p class="img-caption">Depiction of an unsuccessful installation.</p>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-bottom: 16px;">My suggestion was to change the button's copy to <em>Try again</em> to let the user know that the agent installation didn't work. In order to provide another layer of explanation, we added a tooltip with a link to the relevant knowledge base article.</p>
+
+  <div class="full-img">
+    <img src="images/group-1.png" alt="Try again tooltip with knowledge base link">
+    <p class="img-caption">"WMI/WinRM might be disabled" — the tooltip explains the likely cause and links to the fix.</p>
+  </div>
+
+  <div class="section">
+    <h3>Sorting &amp; filtering</h3>
+    <p>The scan results can be sorted and filtered by various criteria — here's what that looks like:</p>
+  </div>
+
+  <div class="full-img">
+    <img src="images/servers-hover-select.png" alt="Hover state — row selection">
+  </div>
+  <div class="full-img">
+    <img src="images/servers-dropdown.png" alt="Dropdown — filter by status">
+  </div>
+
+  <div class="section">
+    <h3>Storage devices</h3>
+    <p>The Storage category (relevant only for domain controller scans) displays detailed information on network storage.</p>
+  </div>
+
+  <div class="wide-img">
+    <img src="images/devices-storage.png" alt="Devices — Storage view">
+    <p class="img-caption">Storage tab showing disk usage and health data for discovered devices.</p>
+  </div>
+
+  <div class="section">
+    <h3>Reports</h3>
+    <p>The Reports section displays a number of useful graphs so you can see network information at a glance.</p>
+  </div>
+
+  <div class="wide-img">
+    <img src="images/group-3.png" alt="Reports tab — device type and status charts">
+    <p class="img-caption">Device Types, Workstation/Server Status, OS Platform, Monitoring Status, OS Aging, and Storage — all surfaced as donut charts.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ── Wrapping it up ─────────────────────────────────── -->
+  <div class="section">
+    <h2>Wrapping it up</h2>
+
+    <h3>Some data</h3>
+    <p>Network Discovery was a big success. As one user I spoke to told me: <em>"Network Discovery was the reason I purchased Atera."</em></p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number">300%</div>
+      <div class="stat-label">improvement in weekly &amp; monthly active users</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">90%</div>
+      <div class="stat-label">trial-to-purchase conversion rate</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">5→3%</div>
+      <div class="stat-label">churn reduction for ND subscribers</div>
+    </div>
+  </div>
+
+  <p style="font-size: 17px; color: var(--ink-2); line-height: 1.75; margin-top: 24px;">Users who trialed Network Discovery ended up purchasing it — which also drove Atera subscriptions, since it can't be purchased standalone. We also doubled the number of trials during this period.</p>
+
+  <div class="section" style="margin-top: 40px;">
+    <h3>Closing thoughts</h3>
+    <p style="color: #4f6677;">I think this is a good example of design work done on a complex system. My main challenge was how to present the aggregated data — while keeping in mind the visualization of the scan settings and balancing the two.</p>
+    <p style="color: #4f6677;">The UI was mostly based on a design system which I helped develop. Having a design system in place allowed me to focus on the user experience and move quickly through this project.</p>
+  </div>
+
+</div><!-- /content -->
+</main>
+
+<a class="back-link" href="/">← Back to all work</a>
+
+<footer>
+  <span class="footer-copy">© 2025 Shoham Samuel</span>
+  <div class="footer-links">
+    <a href="mailto:shoham.samuel@octopus.com">Email</a>
+    <a href="https://www.linkedin.com/in/shohamsam/" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+<div id="lightbox" onclick="this.style.display='none'">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+  // Lightbox for all content images
+  document.querySelectorAll('.full-img img, .wide-img img').forEach(img => {
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', () => {
+      const lb = document.getElementById('lightbox');
+      document.getElementById('lightbox-img').src = img.src;
+      lb.style.display = 'flex';
+    });
+  });
+</script>
+</body>
+</html>

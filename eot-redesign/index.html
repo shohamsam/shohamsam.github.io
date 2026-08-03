@@ -179,9 +179,12 @@
 
   /* ── Activity icons ─────────────────────────────────────── */
   .activities {
-    display: flex; gap: 32px; flex-wrap: wrap;
-    justify-content: center;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 48px;
     margin: 32px 0;
+  }
+  .activities-row {
+    display: flex; gap: 48px; justify-content: center;
   }
   .activity {
     display: flex; flex-direction: column; align-items: center;
@@ -352,25 +355,29 @@
       </ol>
 
       <div class="activities">
-        <div class="activity">
-          <div class="activity-icon"><img src="images/icon-prototyping.svg" alt="Prototyping"></div>
-          <span class="activity-label">Prototyping</span>
+        <div class="activities-row">
+          <div class="activity">
+            <div class="activity-icon"><img src="images/icon-prototyping.svg" alt="Prototyping"></div>
+            <span class="activity-label">Prototyping</span>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><img src="images/icon-journey-mapping.svg" alt="Journey Mapping"></div>
+            <span class="activity-label">Journey Mapping</span>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><img src="images/icon-sketching.svg" alt="Sketching"></div>
+            <span class="activity-label">Sketching</span>
+          </div>
         </div>
-        <div class="activity">
-          <div class="activity-icon"><img src="images/icon-journey-mapping.svg" alt="Journey Mapping"></div>
-          <span class="activity-label">Journey Mapping</span>
-        </div>
-        <div class="activity">
-          <div class="activity-icon"><img src="images/icon-sketching.svg" alt="Sketching"></div>
-          <span class="activity-label">Sketching</span>
-        </div>
-        <div class="activity">
-          <div class="activity-icon"><img src="images/icon-wireframing.svg" alt="Wireframing"></div>
-          <span class="activity-label">Wireframing</span>
-        </div>
-        <div class="activity">
-          <div class="activity-icon"><img src="images/icon-ui-design.svg" alt="UI Design"></div>
-          <span class="activity-label">UI Design</span>
+        <div class="activities-row">
+          <div class="activity">
+            <div class="activity-icon"><img src="images/icon-wireframing.svg" alt="Wireframing"></div>
+            <span class="activity-label">Wireframing</span>
+          </div>
+          <div class="activity">
+            <div class="activity-icon"><img src="images/icon-ui-design.svg" alt="UI Design"></div>
+            <span class="activity-label">UI Design</span>
+          </div>
         </div>
       </div>
     </section>
