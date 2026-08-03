@@ -71,6 +71,27 @@ nav {
   letter-spacing: 0.02em;
 }
 
+.hero-avatar {
+  display: inline-flex;
+  width: 72px;
+  height: 92px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #7673FE;
+  flex-shrink: 0;
+  position: relative;
+  vertical-align: middle;
+}
+.hero-avatar img {
+  position: absolute;
+  width: 106%;
+  height: 126%;
+  object-fit: cover;
+  object-position: top center;
+  top: -18%;
+  left: -3%;
+}
+
 .hero-name {
   font-family: var(--f-serif);
   font-size: clamp(52px, 8vw, 96px);
@@ -78,6 +99,10 @@ nav {
   color: var(--ink);
   margin-bottom: 32px;
   letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em;
 }
 
 .hero-role {
@@ -422,7 +447,7 @@ footer {
 <!-- Hero -->
 <section class="hero">
   <p class="hero-greeting">Hello, I'm</p>
-  <h1 class="hero-name">Shoham Samuel</h1>
+  <h1 class="hero-name">Shoham Samuel <span class="hero-avatar"><img src="images/shoham.png" alt="Shoham Samuel"></span></h1>
   <p class="hero-role">
     <strong>Senior Product Designer</strong><br>
     making complex workflows feel effortless.
