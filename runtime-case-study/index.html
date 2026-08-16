@@ -20,7 +20,7 @@ a:hover { color: #0d3ea8; }
 </style>
 </helmet>
 
-<nav style="position: sticky; top: 0; z-index: 200; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #e7e5e4; padding: 0 48px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
+<nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid #e7e5e4; padding: 0 48px; height: 56px; display: flex; align-items: center; justify-content: space-between;">
   <a href="https://shohamsam.github.io" style="font-size: 14px; font-weight: 600; color: #0d1117; text-decoration: none;">Works</a>
   <div style="display: flex; gap: 32px;">
     <a href="#context" style="font-size: 13px; color: #6b7280; text-decoration: none;" style-hover="color: #0d1117;">Context</a>
@@ -32,7 +32,7 @@ a:hover { color: #0d3ea8; }
 </nav>
 
 <!-- ═══ Hero ═══ -->
-<header id="top" data-screen-label="Hero">
+<header id="top" data-screen-label="Hero" style="margin-top: 56px;">
 
   <sc-if value="{{ heroSplit }}" hint-placeholder-val="{{ true }}">
     <div style="padding: 104px 48px 96px; border-bottom: 1px solid #e7e5e4; display: flex; justify-content: center;">

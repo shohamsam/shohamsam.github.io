@@ -10,6 +10,16 @@ Shoham Samuel's portfolio site — static HTML/CSS/JS, hosted on GitHub Pages.
 
 ---
 
+## ⚠️ Before Laptop Wipe — Back These Up
+These folders are NOT in the git repo and will be lost if not backed up:
+
+1. **`Pricing page assets/`** — all source images and videos for the pricing-pages case study, including the `Extra images/` subfolder
+2. **`.claude/skills/`** — custom Cowork skills (octopus-slides, octopus-deploy-knowledge, octopus-writing-guide, brand-guidelines, etc.)
+
+Back both up to Google Drive or iCloud before wiping.
+
+---
+
 ## Repository Structure
 
 ```
@@ -22,24 +32,25 @@ shohamsam.github.io/
 ├── eot-redesign/               ← Case study (End of Trial Redesign)
 ├── cve-sidecar/                ← Case study
 ├── network-discovery/          ← Case study (Atera)
-├── pricing-pages/              ← Case study (Codefresh self-service checkout) ← BUILT THIS SESSION
+├── pricing-pages/              ← Case study (Codefresh self-service checkout)
 │   ├── index.html
 │   └── images/
-│       ├── hero.png                ← Full product composite (opening image)
+│       ├── hero.png                ← Hero image (1283x1274px)
 │       ├── contact-sales.png       ← The "before" — contact form marketing page
-│       ├── pricing-phase-1.png     ← Phase 1 subscription page (usage bars + plan card)
-│       ├── pricing-phase-1-checkout.png ← Phase 1 checkout modal (support tier cards)
-│       ├── pricing-phase-2-1.png   ← Phase 2 configurator (sliders, presets, live total)
-│       ├── pricing-phase-2-2.png   ← Phase 2 configurator (alternate state)
-│       ├── pricing-phase-2-3.png   ← Phase 2 checkout modal (2-column layout)
-│       ├── isometric.png           ← Isometric 3D render of "Need more Clusters?" card
-│       ├── ds-colors.png           ← 6-colour palette strip (2072×340px, horizontal)
-│       ├── ds-typography.png       ← Type scale: Heading L–XS
-│       ├── ds-icons.png            ← 25 line icons grid on blue-gray background
-│       ├── ds-components.png       ← Component library (icons, buttons, toggles, sliders, etc.)
-│       ├── ds-components-2.png     ← Component library pt.2 (form controls, table, dialogs)
-│       └── ds-light-dark.png       ← Credit card form in light and dark mode side by side
-└── runtime-case-study/         ← Case study (Codefresh, moved from separate repo)
+│       ├── pricing-phase-1.png     ← Phase 1 subscription page
+│       ├── pricing-phase-1-checkout.png ← Phase 1 checkout modal
+│       ├── pricing-phase-2-1.png   ← Phase 2 configurator
+│       ├── pricing-phase-2-2.png   ← Phase 2 configurator alternate state
+│       ├── pricing-phase-2-3.png   ← Phase 2 checkout modal
+│       ├── isometric-large.png     ← Wide isometric (5384x1912px, #F1F5FE bg) — closing image + homepage card thumbnail
+│       ├── ds-colors.png           ← 6-colour palette strip
+│       ├── ds-typography.png       ← Type scale
+│       ├── ds-icons.png            ← 25 line icons
+│       ├── ds-components-2.png     ← Component library (updated)
+│       ├── ds-color-analysis.png   ← Colour token annotations
+│       ├── ds-light-dark-2.png     ← Light/dark form comparison (2512x1370px)
+│       └── plan-interaction.mov    ← Phase 2 interaction video (autoplay, controls, loop, muted)
+└── runtime-case-study/         ← Case study (moved from separate repo)
     ├── index.html
     ├── support.js
     └── assets/
@@ -56,155 +67,139 @@ Used across ALL case studies — do not deviate from these.
 --ink-3:  #6b7280       /* captions, labels, muted */
 --rule:   #e5e7eb       /* borders, dividers */
 --bg:     #ffffff
---bg-warm:#fafaf9       /* hero background, image backgrounds */
---bg-gray:#f6f6f6       /* gray band sections */
+--bg-warm:#fafaf9       /* image card backgrounds */
+--bg-gray:#f6f6f6
 --accent: #7673fe       /* stat numbers, callout borders */
 --f-serif:'Instrument Serif', Georgia, serif
 --f-sans: 'Inter', system-ui, sans-serif
 ```
 
-**h2:** Instrument Serif italic, `clamp(28px, 4vw, 40px)`, weight 400
-**p:** 17px, `--ink-2`, line-height 1.75
+**h2:** Instrument Serif italic, `clamp(28px, 4vw, 40px)`, weight 400  
+**p:** 17px, `--ink-2`, line-height 1.75  
 **nav height:** 60px fixed, frosted glass
 
 ---
 
 ## Homepage (`index.html`)
 
-### Hero
-- "Hello, I'm" greeting → large Instrument Serif name → role text → skill chips
-- Profile photo inline with name: `<span class="hero-avatar">` — purple `#7673FE` background, 16px border radius, `height: 0.72em; width: calc(0.72em * 0.924)` (scales with font)
-- Photo file: `images/shoham.png`
-
-### Card Grid
-**6 case study cards** in a 2-column grid (`max-width: 1060px`). Order:
-1. Lifecycle Editor — full-bleed video thumbnail
-2. Codefresh Runtime Installation — full-bleed video thumbnail ← links now use relative paths (`runtime-case-study/`)
-3. CVE Sidecar — `#0170CD` blue background, image at 80% size
-4. End of Trial Redesign — full-bleed screenshot thumbnail
-5. Network Discovery — `#f0f4f8` background, image at 80% size
-6. **Self-Service Checkout** — `#eef2ff` (light indigo) background, `pricing-phase-2-1.png` at 85% size ← ADDED THIS SESSION
-
-### Hidden section
-"There's more / My full portfolio lives in Figma" section has `display: none` — can be re-enabled if needed.
+### Card Grid — Order
+1. Lifecycle Editor — video thumbnail
+2. Codefresh Runtime Installation — video thumbnail
+3. **Self-Service Checkout** — isometric-large.png, `#F1F5FE` bg, `object-fit: cover`
+4. CVE Sidecar — `#0170CD` blue bg, 80% contain
+5. Purchase Pages Redesign (EOT) — `#C8E0FC` bg, 85% contain
+6. Network Discovery — `#f0f4f8` bg, 80% contain
 
 ---
 
-## Case Study Nav Pattern
-Every case study uses the same nav. **Never add a back link on the right** — that was a duplicate and was removed.
+## Pricing Pages Case Study (`pricing-pages/index.html`)
 
+### Hero
+- Background: `linear-gradient(270deg, #CFF0ED 0%, #ffffff 100%)` (teal right → white left)
+- Image: `hero.png` (1283×1274px) — `position: absolute; right: 0; top: 0; width: 62%`
+- Image fades in from left: `-webkit-mask-image: linear-gradient(to right, transparent 0%, black 22%)`
+- Text column: left 44%, padding `80px 0 80px 8%`
+- `min-height: 892px`
+- Stat block: `+40%` in large Instrument Serif italic + "growth in paying customers" label
+- Current hero image: `Hero image 01.png` from Extra images (exported from Figma at 1283×1274px)
+
+### Meta Bar
+Company · Role · Focus · Year · **Outcome (+40% growth in paying customers)**
+
+### Page Structure
+
+**Part 1 — The Work**
+1. Context: text + `contact-sales.png` (stacked, `.full-img`)
+2. Phase 1: `.img-pair` (wide bleed `-120px`) — `pricing-phase-1.png` + `pricing-phase-1-checkout.png`
+3. Phase 2: text → `.trio-wrap` (1280px wide) with `pricing-phase-2-1/2/3.png` → `plan-interaction.mov` video (autoplay, controls, loop, muted)
+
+**Divider:** `── The Design System ──`
+
+**Part 2 — The Design System**
+4. Colour — `ds-colors.png` (wide bleed)
+5. Typography & Icons — `.ds-pair` side by side (no card background)
+6. Colour tokens — `ds-color-analysis.png` (wide bleed)
+7. Components — `ds-components-2.png` (wide bleed)
+8. Light & dark — `ds-light-dark-2.png` (wide bleed)
+
+**Divider:** `── Outcome ──`
+
+9. Outcome text + 3-stat block (+40% / First / 2 phases)
+10. Closing isometric — `isometric-large.png`, full-width, `background: #F1F5FE`
+
+### Key CSS Classes
+```css
+/* Wide bleed images */
+.wide-img      { margin: 32px -120px; background: var(--bg-warm); border/shadow }
+.img-pair      { display: grid; 1fr 1fr; gap: 16px; margin: 32px -120px; }
+.trio-wrap     { max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; }
+.img-trio      { display: grid; 1fr 1fr 1fr; gap: 16px; }
+
+/* DS images — no background/border */
+.ds-img        { width: 100%; margin: 32px 0; }
+.ds-img--wide  { margin: 32px -120px; width: auto; }
+.ds-pair       { display: grid; 1fr 1fr; gap: 24px; margin: 32px 0; }
+
+/* Closing section */
+.iso-wrap      { background: #F1F5FE; line-height: 0; }
+.iso-wrap img  { width: 100%; display: block; }
+```
+
+### Content Facts
+- Company: Codefresh by Octopus Deploy
+- Role: Senior Product Designer, 2024
+- Phase 1: Fixed plan at $4,170/year — first ever self-serve checkout
+- Phase 2: Live configurator — sliders (clusters + ArgoCD apps), presets, annual/monthly toggle
+- Outcome: **+40%** growth in paying customers within 6 months of Phase 2 launch
+- Em dashes replaced with hyphens throughout (`—` → `-`)
+
+---
+
+## Style Reference
+- **Adham Dannaway** (https://www.adhamdannaway.com/portfolio/figma-design-system) — inspiration for the design system section: image-first, editorial, all white, minimal text
+- DS images are frameless (no warm card background) — images have their own backgrounds baked in
+
+---
+
+## Nav Pattern (all case studies)
 ```html
 <nav>
   <a class="nav-name" href="/">Works</a>
 </nav>
 ```
-
----
-
-## Pricing Pages Case Study (`pricing-pages/`) — BUILT THIS SESSION
-
-### Design direction
-Inspired by Adham Dannaway's portfolio (https://www.adhamdannaway.com/portfolio/figma-design-system):
-- Image-first, editorial, all white background
-- Minimal prose — text frames visuals, doesn't replace them
-- No alternating gray bands (unlike the old stub)
-- Lightbox on all images (click to zoom, Escape to close)
-
-### Structure
-Two-part page with section dividers:
-
-**Part 1 — The Work (case study)**
-1. Text hero + meta bar
-2. `hero.png` (wide-img) — full product composite
-3. Context: PLG transition, from contact form to self-serve (2 paragraphs + `contact-sales.png`)
-4. Phase 1: Fixed plan + inline checkout (2-column image pair: `pricing-phase-1.png` + `pricing-phase-1-checkout.png`)
-5. Phase 2: Live configurator + checkout (`pricing-phase-2-1.png` wide + `pricing-phase-2-3.png`)
-6. `isometric.png` — visual transition moment (centered, drop-shadow, no card border)
-
-**Divider:** `── The Design System ──`
-
-**Part 2 — The Design System (UI deep dive)**
-7. Colour — `ds-colors.png` (6 swatches: teal, dark navy, blue, silver, sky, near-white)
-8. Typography — `ds-typography.png` (Heading L 26px → Label XS 10px)
-9. Icons — `ds-icons.png` (25 line icons, utility set)
-10. Components — `ds-components.png` + `ds-components-2.png` (stacked)
-11. Light & dark — `ds-light-dark.png` (credit card form, both modes)
-
-**Divider:** `── Outcome ──`
-
-12. Outcome text + 3-stat block (+25% customers / First self-serve checkout / 2 phases)
-
-### Key CSS patterns (pricing-pages specific)
-```css
-/* Two-column image pair */
-.img-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-
-/* Isometric image (no card, just shadow) */
-.iso-wrap { display: flex; justify-content: center; padding: 40px 24px 64px; }
-.iso-wrap img { width: 380px; filter: drop-shadow(0 8px 32px rgba(0,0,0,0.10)); }
-
-/* Section bridge divider */
-.section-bridge { display: flex; align-items: center; gap: 20px; max-width: 740px; margin: 0 auto; padding: 0 24px 64px; }
-.section-bridge-rule { flex: 1; height: 1px; background: var(--rule); }
-.section-bridge-label { font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
-```
-
-### Content facts
-- Company: Codefresh by Octopus Deploy
-- Role: Senior Product Designer
-- Phase 1: Fixed plan at $4,170/year — first self-serve checkout
-- Phase 2: Live configurator — sliders (clusters + ArgoCD apps), presets (Startup / Growing Company / Multi-Department), annual/monthly toggle (20% discount), total updates live
-- Add-ons: $1,500/cluster, $1,500/100 apps, support tiers
-- Outcome: 20 → 25 paying customers (+25%) within 6 months of Phase 2 launch
-- Codefresh brand primary: teal/green (#00C4A7 approx) — used on CTAs and sliders
-- Colours: teal · dark navy · blue · silver · sky · near-white
-
----
-
-## Network Discovery Case Study (`network-discovery/`)
-Reference for style patterns — the canonical style template for other case studies.
-
-Key CSS: `.content { max-width: 740px; margin: 0 auto; padding: 80px 24px; }`, `.wide-img { margin: 36px -120px; }`, `.band { background: var(--bg-gray); border-top/bottom: 1px solid var(--rule); }`
-
-Images: `hero.png`, `atera-logo.png`, `group-1/2/3/4.png`, `scan-results.png`, `select-scan-results.png`
-
----
-
-## Runtime Case Study (`runtime-case-study/`)
-Previously a separate GitHub repo (`shohamsam/runtime-case-study`). Now moved into the main repo.
-- Old repo should be **deleted on GitHub** (Settings → Delete repository) — otherwise it still serves the old version
-- Homepage card now uses relative paths (`runtime-case-study/`) not absolute URLs ← FIXED THIS SESSION
+No back link on the right — was removed as duplicate.
 
 ---
 
 ## Git Notes
-- **Always use personal account** (`shohamsam`) in GitHub Desktop, not the Octopus work account
-- `.nojekyll` file exists in root — required for GitHub Pages to serve HTML without Jekyll
-- If git commits fail with lock file errors:
+- Always use personal account (`shohamsam`) in GitHub Desktop, not Octopus work account
+- `.nojekyll` file exists in root — required for GitHub Pages
+- If git lock errors occur:
   ```
-  pkill -f "git maintenance"; pkill -f "github"; sleep 1; rm -f ~/Documents/GitHub/shohamsam.github.io/.git/index.lock ~/Documents/GitHub/shohamsam.github.io/.git/HEAD.lock; git -C ~/Documents/GitHub/shohamsam.github.io add <files> && git -C ~/Documents/GitHub/shohamsam.github.io commit -m "<message>"
+  pkill -f "git maintenance"; pkill -f "github"; sleep 1
+  rm -f ~/Documents/GitHub/shohamsam.github.io/.git/index.lock
+  git -C ~/Documents/GitHub/shohamsam.github.io add <files>
+  git -C ~/Documents/GitHub/shohamsam.github.io commit -m "<message>"
   ```
 
 ---
+
+## Recent Changes (last session)
+- Replaced hero image with `Hero image 01.png` (same 1283×1274px dimensions)
+- Hero image now anchored `right: 0; top: 0` — flush to top-right corner, no clipping
+- Hero image fades in from left using CSS mask gradient (transparent → opaque over 22%)
+- Added `plan-interaction.mov` video below Phase 2 trio (autoplay, controls, loop, muted)
+- Changed +25% outcome stat to **+40%** throughout (hero, meta bar, outcome section, body text)
+- Moved Self-Service Checkout to card #3 on homepage; thumbnail uses `isometric-large.png`
+- Replaced all em dashes (—) with hyphens (-) throughout the case study
+- Skills are stored inside Claude app's internal session folders — not user-accessible, not worth backing up
+
+## Laptop Wipe Notes
+- **Code is safe** once pushed to GitHub — all HTML, images, and videos are in the repo
+- **`Pricing page assets/`** folder contains original source files — back up to iCloud/Drive if you want the originals (not strictly needed since exported versions are in the repo)
+- **Skills** are stored in Claude app internals, not user-accessible — don't worry about them; rebuild on new machine as needed
+- On new machine: clone `shohamsam/shohamsam.github.io` via GitHub Desktop and reconnect to Cowork
 
 ## Pending / To Do
-- [ ] Delete the old `shohamsam/runtime-case-study` repo on GitHub (Settings → Delete repository)
-- [ ] Check Lifecycle Editor and EOT Redesign case studies for nav consistency (should only have "Works" on left, no back link on right)
-- [ ] Consider adding the pricing-pages card thumbnail — currently uses `pricing-phase-2-1.png` at 85%; could replace with a dedicated card thumbnail if one is exported
-
----
-
-## Figma File
-`https://www.figma.com/design/4vLfLaHg6wK30QXS7xKtNi/Screens`
-
-Key nodes used:
-- Network Discovery hero: `node-id=18-26692`
-- Activity icons order: `node-id=18-26725`
-- Profile photo avatar component: `node-id=34638-18732`
-
----
-
-## Style Reference: Adham Dannaway
-https://www.adhamdannaway.com/portfolio/figma-design-system
-
-The pricing pages case study is intentionally styled after this — image-first, editorial, all white, minimal structure. If expanding or adding new case studies in a similar style: short text → big image → short text → big image. Let visuals carry the story.
+- [ ] Delete old `shohamsam/runtime-case-study` repo on GitHub (Settings → Delete repository)
+- [ ] Export new hero images from Figma at 1283×1274px when updating
