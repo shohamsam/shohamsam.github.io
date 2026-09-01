@@ -4,8 +4,8 @@
 Shoham Samuel's portfolio site — static HTML/CSS/JS, hosted on GitHub Pages.
 
 - **Live URL:** https://shohamsam.github.io
-- **Local repo:** `~/Documents/GitHub/shohamsam.github.io`
-- **GitHub Desktop** is used for commits and pushes (personal account: `shohamsam`)
+- **Local repo:** `~/Documents/Portfolio Website` (connected folder, edited via Cowork/Claude)
+- **Cowork/Claude** handles edits, commits, and pushes directly in this folder (personal account: `shohamsam`); GitHub Desktop is no longer the primary workflow but still works if used
 - No build tools, no frameworks — plain HTML files
 
 ---
@@ -172,14 +172,14 @@ No back link on the right — was removed as duplicate.
 ---
 
 ## Git Notes
-- Always use personal account (`shohamsam`) in GitHub Desktop, not Octopus work account
+- Always use personal account (`shohamsam`) for git ops (via Cowork/Claude or GitHub Desktop), not Octopus work account
 - `.nojekyll` file exists in root — required for GitHub Pages
 - If git lock errors occur:
   ```
   pkill -f "git maintenance"; pkill -f "github"; sleep 1
-  rm -f ~/Documents/GitHub/shohamsam.github.io/.git/index.lock
-  git -C ~/Documents/GitHub/shohamsam.github.io add <files>
-  git -C ~/Documents/GitHub/shohamsam.github.io commit -m "<message>"
+  rm -f ~/Documents/Portfolio\ Website/.git/index.lock
+  git -C ~/Documents/Portfolio\ Website add <files>
+  git -C ~/Documents/Portfolio\ Website commit -m "<message>"
   ```
 
 ---
@@ -198,8 +198,8 @@ No back link on the right — was removed as duplicate.
 - **Code is safe** once pushed to GitHub — all HTML, images, and videos are in the repo
 - **`Pricing page assets/`** folder contains original source files — back up to iCloud/Drive if you want the originals (not strictly needed since exported versions are in the repo)
 - **Skills** are stored in Claude app internals, not user-accessible — don't worry about them; rebuild on new machine as needed
-- On new machine: clone `shohamsam/shohamsam.github.io` via GitHub Desktop and reconnect to Cowork
+- On new machine: connect the target folder in Cowork/Claude and clone `shohamsam/shohamsam.github.io` into it
 
 ## Pending / To Do
-- [ ] Delete old `shohamsam/runtime-case-study` repo on GitHub (Settings → Delete repository)
-- [ ] Export new hero images from Figma at 1283×1274px when updating
+- [x] Delete old `shohamsam/runtime-case-study` repo on GitHub (Settings → Delete repository)
+- [x] Export new hero images from Figma at 1283×1274px when updating
